@@ -22,8 +22,12 @@ export default function randomise(
 
     god.send(Player.arrayToString(result) + "-----------------------------------");
 
-    result.forEach(element => {
-      element.guildMember.send(element.role + "\n-----------------------------------");
+    result.forEach(async element => {
+      try{
+        await element.guildMember.send(element.role + "\n-----------------------------------");
+      }catch(error){
+        await god.send("Player " + element.guildMember.nickname + " didn't get his role: " + element.role + " !");
+      }
     });
   }
 }
