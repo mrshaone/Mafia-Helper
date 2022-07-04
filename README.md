@@ -1,7 +1,7 @@
 # Mafia-Helper
  
 ## Config file
-Config file (config.js) contains:
+Config file (config.json) contains:
 ```json
 {
     "token": "", // your bot's token
