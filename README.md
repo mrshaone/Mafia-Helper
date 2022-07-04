@@ -8,6 +8,6 @@ Config file (config.js) contains:
     "prefix": "", // for example "%"
     "client_id": "",
     "public_key": "",
-    "players_role": "" // server defined role for mafia players
+    "PLAYERS_ROLES_ID": "" // server defined role id for mafia players
 }
 ```
