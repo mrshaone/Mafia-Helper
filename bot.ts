@@ -1,4 +1,4 @@
-import { token } from "./config.json";
+import { token, prefix } from "./config.json";
 import {
   Client,
   Intents,
@@ -19,8 +19,6 @@ const client = new Client({
   ],
 });
 
-const PREFIX = "%";
-
 client.once("ready", async () => {
   console.log("Ready!");
 });
@@ -28,13 +26,13 @@ client.once("ready", async () => {
 client.on("messageCreate", (message: Message) => {
   const user = message.author;
   
-  if (!message.content.startsWith(PREFIX) || message.member?.nickname != "!  GOD") {
+  if (!message.content.startsWith(prefix) || message.member?.nickname != "!  GOD") {
     return;
   }
 
   const [CMD_NAME, ...args] = message.content
     .trim()
-    .substring(PREFIX.length)
+    .substring(prefix.length)
     .split(" ");
 
   const member = message.member;

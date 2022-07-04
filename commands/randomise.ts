@@ -1,4 +1,5 @@
-import { Collection, GuildMember, TextChannel, VoiceChannel } from "discord.js";
+import { PLAYERS_ROLES_ID } from "../config.json";
+import { Collection, GuildMember, TextChannel, VoiceChannel, Role } from "discord.js";
 import Player from "../types/Players";
 import Roles from "../types/Roles";
 
@@ -19,6 +20,8 @@ export default function randomise(
     const allRoles = processedRoles.allRoles();
 
     const result = shuffle(allRoles, players);
+
+    fetchMemebrsRoles(textChannel, players);
 
     god.send(Player.arrayToString(result) + "-----------------------------------");
 
@@ -124,6 +127,33 @@ function fetchMembers(
   });
 
   return members;
+}
+
+function getMembersDifference(a: Array<GuildMember>, b: Array<GuildMember>): Array<GuildMember> {
+  return a.filter((element) => {
+    return !b.includes(element);
+  });
+}
+
+function fetchMemebrsRoles(textChannel: TextChannel, players: Array<GuildMember>) {
+  let customRole = textChannel.guild.roles.cache.get(PLAYERS_ROLES_ID);
+
+  let withRoleMembers: Array<GuildMember> = [];
+
+  customRole?.members.forEach((member) => {
+    withRoleMembers.push(member);
+  });
+  
+  let diff = getMembersDifference(withRoleMembers, players);
+  let diff2 = getMembersDifference(players, withRoleMembers);
+  
+  diff.forEach((member) => {
+    member.roles.remove([PLAYERS_ROLES_ID]).catch(console.error);
+  });
+  
+  diff2.forEach((member) => {
+    member.roles.set([PLAYERS_ROLES_ID]).catch(console.error);
+  });
 }
 
 function shuffle(roles: Array<string>, players: Array<GuildMember>): Array<Player> {
