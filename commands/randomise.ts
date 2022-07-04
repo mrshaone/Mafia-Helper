@@ -129,12 +129,6 @@ function fetchMembers(
   return members;
 }
 
-function getMembersDifference(a: Array<GuildMember>, b: Array<GuildMember>): Array<GuildMember> {
-  return a.filter((element) => {
-    return !b.includes(element);
-  });
-}
-
 function fetchMemebrsRoles(textChannel: TextChannel, players: Array<GuildMember>) {
   let customRole = textChannel.guild.roles.cache.get(PLAYERS_ROLES_ID);
 
@@ -144,14 +138,11 @@ function fetchMemebrsRoles(textChannel: TextChannel, players: Array<GuildMember>
     withRoleMembers.push(member);
   });
   
-  let diff = getMembersDifference(withRoleMembers, players);
-  let diff2 = getMembersDifference(players, withRoleMembers);
-  
-  diff.forEach((member) => {
+  withRoleMembers.forEach((member) => {
     member.roles.remove([PLAYERS_ROLES_ID]).catch(console.error);
   });
   
-  diff2.forEach((member) => {
+  players.forEach((member) => {
     member.roles.set([PLAYERS_ROLES_ID]).catch(console.error);
   });
 }
