@@ -4,9 +4,10 @@
 Config file (config.js) contains:
 ```json
 {
-    "token": "",
+    "token": "", // your bot's token
+    "prefix": "", // for example "%"
     "client_id": "",
     "public_key": "",
-    "players_role": ""
+    "players_role": "" // server defined role for mafia players
 }
 ```
