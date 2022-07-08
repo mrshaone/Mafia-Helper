@@ -17,7 +17,7 @@ export default class Roles {
       this.maverick.forEach((obj) => (str += obj + " \n"));
     }
 
-    str += "\n\n";
+    str += `Players count: ${this.count}`;
     return str;
   }
 

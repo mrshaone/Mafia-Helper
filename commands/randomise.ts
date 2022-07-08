@@ -1,5 +1,11 @@
 import { PLAYERS_ROLES_ID } from "../config.json";
-import { Collection, GuildMember, TextChannel, VoiceChannel, Role } from "discord.js";
+import {
+  Collection,
+  GuildMember,
+  TextChannel,
+  VoiceChannel,
+  Role,
+} from "discord.js";
 import Player from "../types/Players";
 import Roles from "../types/Roles";
 
@@ -10,26 +16,39 @@ export default function randomise(
 ) {
   if (voiceChannel) {
     const processedRoles: Roles = understandRoles(rawRoles);
-
-    textChannel.send(processedRoles.toString());
-
-
     const allMembers = voiceChannel.members;
     const players: Array<GuildMember> = fetchMembers(allMembers);
     let god: any = findGod(allMembers);
+
     const allRoles = processedRoles.allRoles();
-
     const result = shuffle(allRoles, players);
+    if (!result || result.length === 0) {
+      god.send("Number of roles and players not matching!");
+      return;
+    }
 
-    fetchMemebrsRoles(textChannel, players);
+    // Sending preview to corresponding textChannel
+    textChannel.send(processedRoles.toString());
 
-    god.send(Player.arrayToString(result) + "-----------------------------------");
+    // Sending players and Roles to !  GOD
+    god.send(
+      Player.arrayToString(result) + "-----------------------------------"
+    );
 
-    result.forEach(async element => {
-      try{
-        await element.guildMember.send(element.role + "\n-----------------------------------");
-      }catch(error){
-        await god.send("Player " + element.guildMember.nickname + " didn't get his role: " + element.role + " !");
+    // Sending roles to corresponding players
+    result.forEach(async (element) => {
+      try {
+        await element.guildMember.send(
+          element.role + "\n-----------------------------------"
+        );
+      } catch (error) {
+        await god.send(
+          "Player " +
+            element.guildMember.nickname +
+            " didn't get his role: " +
+            element.role +
+            " !"
+        );
       }
     });
   }
@@ -129,7 +148,14 @@ function fetchMembers(
   return members;
 }
 
-function fetchMemebrsRoles(textChannel: TextChannel, players: Array<GuildMember>) {
+function fetchMemebrsRoles(
+  textChannel: TextChannel,
+  players: Array<GuildMember>
+) {
+  if (!PLAYERS_ROLES_ID || PLAYERS_ROLES_ID.length == 0) {
+    return;
+  }
+
   let customRole = textChannel.guild.roles.cache.get(PLAYERS_ROLES_ID);
 
   let withRoleMembers: Array<GuildMember> = [];
@@ -137,17 +163,28 @@ function fetchMemebrsRoles(textChannel: TextChannel, players: Array<GuildMember>
   customRole?.members.forEach((member) => {
     withRoleMembers.push(member);
   });
-  
+
   withRoleMembers.forEach((member) => {
     member.roles.remove([PLAYERS_ROLES_ID]).catch(console.error);
   });
-  
+
   players.forEach((member) => {
     member.roles.set([PLAYERS_ROLES_ID]).catch(console.error);
   });
 }
 
-function shuffle(roles: Array<string>, players: Array<GuildMember>): Array<Player> {
+function shuffle(
+  roles: Array<string>,
+  players: Array<GuildMember>
+): Array<Player> {
+  if (roles.length < players.length) {
+    return [];
+  }
+
+  if (players.length < roles.length) {
+    return [];
+  }
+
   let currentIndex = roles.length,
     randomIndex;
 
@@ -162,8 +199,8 @@ function shuffle(roles: Array<string>, players: Array<GuildMember>): Array<Playe
     ];
   }
 
-  const result: Array<Player> = []
-  for(let i = 0; i < roles.length ; i++){
+  const result: Array<Player> = [];
+  for (let i = 0; i < roles.length; i++) {
     result.push(new Player(players[i], roles[i]));
   }
 
